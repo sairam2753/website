@@ -1,0 +1,34 @@
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost/ecommerce', { useNewUrlParser: true, useUnifiedTopology: true });
+
+// Create a Product Schema
+const ProductSchema = new mongoose.Schema({
+    name: String,
+    price: Number,
+    description: String,
+    imageUrl: String
+});
+const Product = mongoose.model('Product', ProductSchema);
+
+app.use(bodyParser.json());
+
+// Get list of products
+app.get('/products', async (req, res) => {
+    const products = await Product.find();
+    res.json(products);
+});
+
+// Add product to cart (simple example)
+app.post('/cart', (req, res) => {
+    const cartItem = req.body;
+    res.send(`Product ${cartItem.name} added to cart.`);
+});
+
+app.listen(3000, () => {
+    console.log('Backend server running on http://localhost:3000');
+});
